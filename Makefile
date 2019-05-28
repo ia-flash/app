@@ -10,7 +10,10 @@ export COMPOSE
 export APP_PORT
 export LOG_LEVEL
 
-build:
+docker/env.list: 
+	cp docker/env.list.sample docker/env.list
+
+build: docker/env.list
 	$(COMPOSE) build
 
 dev:
