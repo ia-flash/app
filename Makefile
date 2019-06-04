@@ -9,6 +9,7 @@ COMPOSE?=docker-compose -p $(PROJECT_NAME) -f docker-compose.yml
 export COMPOSE
 export APP_PORT
 export LOG_LEVEL
+export TRAEFIK_FRONTEND_RULE 
 
 docker/env.list: 
 	cp docker/env.list.sample docker/env.list
