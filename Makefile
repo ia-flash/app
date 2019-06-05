@@ -6,10 +6,7 @@ include docker/env.list
 # compose command to merge production file and and dev/tools overrides
 COMPOSE?=docker-compose -p $(PROJECT_NAME) -f docker-compose.yml 
 
-export COMPOSE
-export APP_PORT
-export LOG_LEVEL
-export TRAEFIK_FRONTEND_RULE 
+export 
 
 docker/env.list: 
 	cp docker/env.list.sample docker/env.list

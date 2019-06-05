@@ -1,3 +1,4 @@
+---
 version: '3'
 services:
   nginx:
@@ -10,26 +11,35 @@ services:
       - traefik.backend=web
       - traefik.port=80
       - traefik.frontend.rule=${TRAEFIK_FRONTEND_RULE}
-    volumes: 
+    volumes:
       - ./dist:/usr/share/nginx/html
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
     networks:
-     - isolated_nw
+      - isolated_nw
   traefik:
     image: traefik
     container_name: ${USER}-traefik
-    command: --logLevel=${LOG_LEVEL}
+    command: --acme.storage=/etc/traefik/acme.json \
+            --logLevel=${LOG_LEVEL} \
+            ${TRAEFIK_ENTRYPOINT_HTTP} \
+            --entryPoints="Name:https Address::443 TLS" \
+            --defaultentrypoints=${TRAEFIK_DEFAULT_ENTRYPOINTS} \
+            --acme=${ACME_ENABLE} --acme.entrypoint=https \
+            --acme.httpchallenge --acme.httpchallenge.entrypoint=http \
+            --acme.domains="${ACME_DOMAINS}" --acme.email="${ACME_EMAIL}" \
+            --docker --docker.domain="${DOCKER_DOMAIN}" \
+            --docker.endpoint="unix:///var/run/docker.sock" \
+            --docker.watch=true --docker.exposedbydefault="false"
     ports:
       - ${APP_PORT}:80
       - 443:443
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./docker/traefik/traefik.toml:/traefik.toml:ro
       - ./docker/traefik/acme:/etc/traefik/acme
     networks:
-     - isolated_nw
+      - isolated_nw
 
 networks:
   isolated_nw:
     external:
-     name: isolated_nw
+      name: isolated_nw
