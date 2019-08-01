@@ -11,6 +11,7 @@ services:
       - traefik.backend=web
       - traefik.port=80
       - traefik.frontend.rule=${TRAEFIK_FRONTEND_RULE}
+      - traefik.frontend.priority=5
     volumes:
       - ./dist:/usr/share/nginx/html
       - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf
