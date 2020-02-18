@@ -18,7 +18,7 @@ services:
     networks:
       - isolated_nw
   traefik:
-    image: traefik
+    image: traefik:1.7
     container_name: ${USER}-traefik
     command: --acme.storage=/etc/traefik/acme.json \
             --logLevel=${LOG_LEVEL} \
