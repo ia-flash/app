@@ -1,26 +1,11 @@
-#########
-#  APP  #
-#########
-
-export PROJECT_NAME=main
+export PROJECT_NAME=iaflash
+export APP_PATH := $(shell pwd)
 export APP_PORT=5000
+export APP_VERSION	:= $(shell git rev-parse HEAD | cut -c1-8)
+export EXEC_ENV=dev
+export NGINX_PATH=${APP_PATH}/nginx
+export TRAEFIK_PATH=${APP_PATH}/traefik
 export LOG_LEVEL=DEBUG
-
-#############
-#  Traefik  #
-#############
-
-export TRAEFIK_FRONTEND_RULE=PathPrefix:/
-export ACME_ENABLE=false
-export ACME_EMAIL=user@example.com
-export ACME_DOMAINS=example.com,www.example.com
-export DOCKER_DOMAIN="dev.example"
-export TRAEFIK_DEFAULT_ENTRYPOINTS=http
-export TRAEFIK_ENTRYPOINT_HTTP=--entryPoints="Name:http Address::80"
-
-############
-#  Docker  #
-############
 
 export COMPOSE=docker-compose -p $(PROJECT_NAME) -f docker-compose.yml 
 
