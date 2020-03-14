@@ -20,7 +20,7 @@ traefik/acme.json:
 
 dependencies: nginx/dist traefik/acme.json
 
-build:
+build: dependencies
 	$(COMPOSE) build
 
 dev: dependencies
