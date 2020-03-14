@@ -1,26 +1,47 @@
-# The Makefile defines all builds/tests steps
+#########
+#  APP  #
+#########
 
-# include .env file
-include docker/env.list
+export PROJECT_NAME=main
+export APP_PORT=5000
+export LOG_LEVEL=DEBUG
 
-# compose command to merge production file and and dev/tools overrides
-COMPOSE?=docker-compose -p $(PROJECT_NAME) -f docker-compose.yml 
+#############
+#  Traefik  #
+#############
 
-export 
+export TRAEFIK_FRONTEND_RULE=PathPrefix:/
+export ACME_ENABLE=false
+export ACME_EMAIL=user@example.com
+export ACME_DOMAINS=example.com,www.example.com
+export DOCKER_DOMAIN="dev.example"
+export TRAEFIK_DEFAULT_ENTRYPOINTS=http
+export TRAEFIK_ENTRYPOINT_HTTP=--entryPoints="Name:http Address::80"
 
-docker/env.list: 
-	cp docker/env.list.sample docker/env.list
+############
+#  Docker  #
+############
 
-dist:
-	git clone --single-branch --branch builds https://github.com/ia-flash/frontend dist
+export COMPOSE=docker-compose -p $(PROJECT_NAME) -f docker-compose.yml 
 
-build: docker/env.list
+dummy               := $(shell touch artifacts)
+include ./artifacts
+
+nginx/dist:
+	git clone --single-branch --depth=1 --branch builds https://github.com/ia-flash/frontend nginx/dist
+
+traefik/acme.json:
+	touch traefik/acme.json
+
+dependencies: nginx/dist traefik/acme.json
+
+build:
 	$(COMPOSE) build
 
-dev: dist
+dev: dependencies
 	$(COMPOSE) up
 
-up: dist
+up: dependencies
 	$(COMPOSE) up -d
 
 stop:
