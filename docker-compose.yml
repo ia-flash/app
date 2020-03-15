@@ -8,13 +8,6 @@ services:
       context: ${NGINX_PATH}
       target: ${EXEC_ENV}
       dockerfile: Dockerfile
-    expose:
-      - 80
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.nginx.entrypoints=http
-      - traefik.http.routers.nginx.rule=Host(`localhost`)
-      - traefik.http.services.nginx.loadbalancer.server.port=80
     volumes:
       - ./nginx/dist:/usr/share/nginx/html
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
@@ -29,14 +22,15 @@ services:
       dockerfile: Dockerfile
     security_opt:
       - no-new-privileges:true
-    command:
-      - "--log.level=${LOG_LEVEL}"
-      - "--entryPoints.http.address=:80"
-      - "--entryPoints.https.address=:443"
-      - "--providers.docker=true" 
-      - "--providers.docker.watch=true"
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.docker.exposedByDefault=false"
+    environment:
+      - TRAEFIK_LOG_LEVEL=${LOG_LEVEL}
+      - TRAEFIK_ENTRYPOINTS_http=true
+      - TRAEFIK_ENTRYPOINTS_http_ADDRESS=:80
+      - TRAEFIK_ENTRYPOINTS_https=true
+      - TRAEFIK_ENTRYPOINTS_https_ADDRESS=:443
+      - TRAEFIK_PROVIDERS_DOCKER=true
+      - TRAEFIK_PROVIDERS_DOCKER_ENDPOINT=unix:///var/run/docker.sock
+      - TRAEFIK_PROVIDERS_DOCKER_EXPOSEDBYDEFAULT=false
     ports:
       - ${APP_PORT}:80
       - 443:443
